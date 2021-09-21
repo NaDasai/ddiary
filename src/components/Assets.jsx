@@ -24,7 +24,7 @@ export default function Assets() {
   if (!coinList || !coinList.length || isLoading) {
     return (
       <Box display="flex" flexDirection="column" alignItems="center">
-        <Typography variant="h4" gutterBottom>Moralis Zerion Clone</Typography>
+        <Typography variant="h4" gutterBottom>DDiary</Typography>
         <Typography>Connect an Ethereum wallet to manage your portfolio</Typography>
         <Login />
       </Box>

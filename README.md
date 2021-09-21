@@ -1,7 +1,23 @@
-# Moralis Zerion Clone
+# DDiary
 
-Youtube tutorial:<br>
-[I Cloned Zerion in 20 mins](https://youtu.be/35oNV8Qv7-I)
+1st commit:
+
+npm install moralis react-moralis @material-ui/core @material-ui/icons
+.env changed
+npm install
+createTheme corrected 
+    "moralis": "0.0.44",
+    "react-moralis": "^0.2.2",
+npm update moralis --force
+npm update react-moralis --force
+npm install @walletconnect/web3-provider
+Git: https://www.datacamp.com/community/tutorials/git-push-pull
+
+TODO:
+Show history transactions
+Program transaction
+Add notes (display transactions notes)
+Take a loan. (show the ones we can)
 
 ## To follow along
 
@@ -12,7 +28,7 @@ You will need
 In a terminal navigate to the directory you would like to create the project in then use the react script command to create the project.
 
 ```
-npx create-react-app moralis-zerion-clone
+npx create-react-app ddiary
 ```
 
 Install dependancies
@@ -60,10 +76,3 @@ See the section about [deployment](https://facebook.github.io/create-react-app/d
 [React documentation](https://reactjs.org/)
 
 [Matierial UI](https://material-ui.com/)
-
-1st commit:
-
-npm install moralis react-moralis @material-ui/core @material-ui/icons
-.env changed
-npm install
-createTheme corrected 
