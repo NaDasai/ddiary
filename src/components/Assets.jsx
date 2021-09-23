@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import Card from "@material-ui/core/Card";
 import CardContent from "@material-ui/core/CardContent";
 import { makeStyles } from "@material-ui/core/styles";
@@ -10,6 +10,8 @@ import { useCoinData } from "../hooks/coinData";
 import { c2 } from "../utils";
 import Login from "./Login";
 
+import { useMoralis } from "react-moralis";
+
 const useStyles = makeStyles((theme) => ({
   tokenImg: {
     height: "2rem",
@@ -18,6 +20,75 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function Assets() {
+
+
+  const { Moralis, user, isAuthenticated } = useMoralis();
+
+  function millisecondsToTime (ms) {
+    let minutes = Math.floor(ms / (1000 * 60));
+    let hours = Math.floor(ms / (1000 * 60 * 60));
+    let days = Math.floor(ms / (1000 * 60 * 60 * 24));
+    
+    if (days < 1) {
+        if (hours < 1) {
+            if (minutes < 1) {
+                return `less than a minute ago`
+            } else return `${minutes} minutes(s) ago`
+        } else return `${hours} hours(s) ago`
+    } else return `${days} days(s) ago`
+  }
+  
+  //WEB3API FUNCTIONS
+  async function Transactions() {
+  // The transactions are hardcoded to retrieve only rinkeby transactions. 
+  // you can change that here:
+  const options = { chain: "Eth" };
+  const transactions = await Moralis.Web3API.account.getTransactions(options);
+
+  let currentDiv = document.getElementById("divtransactions");
+  
+  if (transactions.total > 0) {
+      let table = `
+      <table class="table">
+      <thead>
+      <tr>
+      <th scope="col">Transaction</th>
+      <th scope="col">Block Number</th>
+      <th scope="col">Age</th>
+      <th scope="col">Type</th>
+      <th scope="col">Fee</th>
+      <th scope="col">Value</th>
+          </tr>
+      </thead>
+      <tbody id="theTransactions">
+      </tbody>
+      </table>
+      `
+      currentDiv.innerHTML = table;
+
+      transactions.result.forEach(t => {
+          let content = `
+          <tr>
+              <td><a href='https://rinkeby.etherscan.io/tx/${t.hash}' target="_blank" rel="noopener noreferrer">${t.hash}</a></td>
+              <td><a href='https://rinkeby.etherscan.io/block/${t.block_number}' target="_blank" rel="noopener noreferrer">${t.block_number}</a></td>
+              <td>${millisecondsToTime(Date.parse(new Date()) - Date.parse(t.block_timestamp))}</td>
+              <td>${t.from_address == Moralis.User.current().get('ethAddress') ? 'Outgoing' : 'Incoming'}</td>
+              <td>${((t.gas * t.gas_price) / 1e18).toFixed(5)} ETH</td>
+              <td>${(t.value / 1e18).toFixed(5)} ETH</td>
+          </tr>
+          `
+          currentDiv.innerHTML += content;
+      })
+  }
+}
+
+      useEffect(() => {
+        if(isAuthenticated){
+          Transactions();
+    }
+    }, [isAuthenticated]); 
+
+
   const { coinList, portfolioValue, isLoading } = useCoinData();
   const styles = useStyles();
 
@@ -69,6 +140,12 @@ export default function Assets() {
             </Box>
           ))}
         </CardContent>
+      </Card>
+      <Card variant="outlined">
+        <CardContent>
+        <Typography gutterBottom>Transactions</Typography>
+      <div id="divtransactions"></div>
+      </CardContent>
       </Card>
     </div>
   );
