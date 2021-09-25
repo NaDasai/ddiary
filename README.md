@@ -19,6 +19,11 @@ Program transaction
 Add notes (display transactions notes)
 Take a loan. (show the ones we can)
 
+## Bugs
+NaN in ETH price
+Table of transactions not displayed well
+Auth doesn't work
+
 ## To follow along
 
 You will need

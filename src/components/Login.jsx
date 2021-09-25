@@ -13,7 +13,7 @@ export default function Login() {
   if (!isAuthenticated) {
     return (
       <Box display="flex" justifyContent="center" p={1}>
-        <Button color="primary" variant="contained" onClick={() => authenticate()}>
+        <Button color="primary" variant="contained" onClick={() => authenticate({signingMessage:"Write on you decentralised diary."})}>
           Connect
         </Button>
       </Box>

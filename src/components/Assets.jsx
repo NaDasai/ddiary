@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import Card from "@material-ui/core/Card";
 import CardContent from "@material-ui/core/CardContent";
 import { makeStyles } from "@material-ui/core/styles";
@@ -11,6 +11,8 @@ import { c2 } from "../utils";
 import Login from "./Login";
 
 import { useMoralis } from "react-moralis";
+import Calendar from 'react-calendar';
+import 'react-calendar/dist/Calendar.css';
 
 const useStyles = makeStyles((theme) => ({
   tokenImg: {
@@ -22,7 +24,7 @@ const useStyles = makeStyles((theme) => ({
 export default function Assets() {
 
 
-  const { Moralis, user, isAuthenticated } = useMoralis();
+  const { Moralis, isAuthenticated } = useMoralis();
 
   function millisecondsToTime (ms) {
     let minutes = Math.floor(ms / (1000 * 60));
@@ -44,9 +46,9 @@ export default function Assets() {
   // you can change that here:
   const options = { chain: "Eth" };
   const transactions = await Moralis.Web3API.account.getTransactions(options);
-
-  let currentDiv = document.getElementById("divtransactions");
   
+  let currentDiv = document.getElementById("divtransactions");
+
   if (transactions.total > 0) {
       let table = `
       <table class="table">
@@ -69,12 +71,13 @@ export default function Assets() {
       transactions.result.forEach(t => {
           let content = `
           <tr>
-              <td><a href='https://rinkeby.etherscan.io/tx/${t.hash}' target="_blank" rel="noopener noreferrer">${t.hash}</a></td>
-              <td><a href='https://rinkeby.etherscan.io/block/${t.block_number}' target="_blank" rel="noopener noreferrer">${t.block_number}</a></td>
+              <td><a href='https://etherscan.io/tx/${t.hash}' target="_blank" rel="noopener noreferrer">${t.hash}</a></td>
+              <td><a href='https://etherscan.io/block/${t.block_number}' target="_blank" rel="noopener noreferrer">${t.block_number}</a></td>
               <td>${millisecondsToTime(Date.parse(new Date()) - Date.parse(t.block_timestamp))}</td>
               <td>${t.from_address == Moralis.User.current().get('ethAddress') ? 'Outgoing' : 'Incoming'}</td>
               <td>${((t.gas * t.gas_price) / 1e18).toFixed(5)} ETH</td>
               <td>${(t.value / 1e18).toFixed(5)} ETH</td>
+              <td><Button>${t.block_timestamp}</Button></td>
           </tr>
           `
           currentDiv.innerHTML += content;
@@ -82,11 +85,20 @@ export default function Assets() {
   }
 }
 
+const [valueDate, onChange] = useState(new Date());
+
       useEffect(() => {
         if(isAuthenticated){
-          Transactions();
+          window.onload = function () {
+            Transactions();
+            }
     }
     }, [isAuthenticated]); 
+
+    function onChangeDate(nextValue) {
+      onChange(nextValue);
+      console.log(nextValue);
+    }
 
 
   const { coinList, portfolioValue, isLoading } = useCoinData();
@@ -143,8 +155,17 @@ export default function Assets() {
       </Card>
       <Card variant="outlined">
         <CardContent>
+        <div>
+      <Calendar
+        onChange={onChangeDate}
+        value={valueDate}
+        maxDate={new Date()}
+      />
+    </div>
+    <div id="container">
         <Typography gutterBottom>Transactions</Typography>
       <div id="divtransactions"></div>
+      </div>
       </CardContent>
       </Card>
     </div>
