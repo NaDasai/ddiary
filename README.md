@@ -19,10 +19,15 @@ Program transaction
 Add notes (display transactions notes)
 Take a loan. (show the ones we can)
 
+## Ideas
+
+Sort transactions (categories)
+
 ## Bugs
 NaN in ETH price
 Table of transactions not displayed well
-Auth doesn't work
+innerHTML null for +
+function for date?
 
 ## To follow along
 

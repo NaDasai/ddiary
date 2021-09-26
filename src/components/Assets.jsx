@@ -39,17 +39,17 @@ export default function Assets() {
         } else return `${hours} hours(s) ago`
     } else return `${days} days(s) ago`
   }
-  
-  //WEB3API FUNCTIONS
-  async function Transactions() {
-  // The transactions are hardcoded to retrieve only rinkeby transactions. 
-  // you can change that here:
-  const options = { chain: "Eth" };
-  const transactions = await Moralis.Web3API.account.getTransactions(options);
-  
-  let currentDiv = document.getElementById("divtransactions");
 
-  if (transactions.total > 0) {
+
+  function setDivDate (transactions) {
+
+    let currentDiv = document.getElementById("divtransactions");
+    currentDiv.innerHTML = "";
+
+    if (transactions.length > 0) {
+
+      console.log("We are in setDiv")
+
       let table = `
       <table class="table">
       <thead>
@@ -68,21 +68,40 @@ export default function Assets() {
       `
       currentDiv.innerHTML = table;
 
-      transactions.result.forEach(t => {
-          let content = `
-          <tr>
-              <td><a href='https://etherscan.io/tx/${t.hash}' target="_blank" rel="noopener noreferrer">${t.hash}</a></td>
-              <td><a href='https://etherscan.io/block/${t.block_number}' target="_blank" rel="noopener noreferrer">${t.block_number}</a></td>
-              <td>${millisecondsToTime(Date.parse(new Date()) - Date.parse(t.block_timestamp))}</td>
-              <td>${t.from_address == Moralis.User.current().get('ethAddress') ? 'Outgoing' : 'Incoming'}</td>
-              <td>${((t.gas * t.gas_price) / 1e18).toFixed(5)} ETH</td>
-              <td>${(t.value / 1e18).toFixed(5)} ETH</td>
-              <td><Button>${t.block_timestamp}</Button></td>
-          </tr>
-          `
-          currentDiv.innerHTML += content;
-      })
-  }
+    transactions.forEach((t) => {
+    let content = `
+    <tr>
+        <td><a href='https://etherscan.io/tx/${t.attributes.hash}' target="_blank" rel="noopener noreferrer">${t.attributes.hash}</a></td>
+        <td><a href='https://etherscan.io/block/${t.attributes.block_number}' target="_blank" rel="noopener noreferrer">${t.attributes.block_number}</a></td>
+        <td>${millisecondsToTime(Date.parse(new Date()) - Date.parse(t.attributes.block_timestamp))}</td>
+        <td>${t.attributes.from_address == Moralis.User.current().get('ethAddress') ? 'Outgoing' : 'Incoming'}</td>
+        <td>${((t.attributes.gas * t.attributes.gas_price) / 1e18).toFixed(5)} ETH</td>
+        <td>${(t.attributes.value / 1e18).toFixed(5)} ETH</td>
+        <td><Button>${t.attributes.block_timestamp}</Button></td>
+    </tr>
+    `
+    currentDiv.innerHTML += content;
+    //console.log((new Date(t.block_timestamp)).toLocaleDateString())
+    console.log("Each transaction: " + JSON.stringify(t))
+    console.log("hash: " + t.attributes.hash)
+    console.log(t.get('hash'))
+})
+}
+}
+
+  
+  //WEB3API FUNCTIONS
+  async function Transactions() {
+  // The transactions are hardcoded to retrieve only rinkeby transactions. 
+  // you can change that here:
+  const options = { chain: "Eth" };
+  const transactions = await Moralis.Web3API.account.getTransactions(options);
+
+  console.log("Transactions " + transactions);
+  
+  // all transactions
+  //setDivDate (transactions);
+
 }
 
 const [valueDate, onChange] = useState(new Date());
@@ -95,9 +114,26 @@ const [valueDate, onChange] = useState(new Date());
     }
     }, [isAuthenticated]); 
 
-    function onChangeDate(nextValue) {
+    async function onChangeDate(nextValue) {
       onChange(nextValue);
-      console.log(nextValue);
+
+      // set lessThan date
+      let nextDate = new Date(nextValue);
+      nextDate.setDate(nextDate.getDate()+1);
+
+      let query = new Moralis.Query('EthTransactions')
+      query.greaterThan("block_timestamp", new Date(nextValue));
+      query.lessThan("block_timestamp", nextDate);
+      const resultDateTransaction = await query.find()
+
+      console.log("First date " + nextValue); // .toLocaleDateString()
+      console.log("First date string " + nextValue.toLocaleDateString());
+      console.log("Next date " + nextDate);
+      console.log("Result date " + resultDateTransaction.length);
+      console.log("Result date " + resultDateTransaction);
+
+      setDivDate (resultDateTransaction);
+
     }
 
 
@@ -108,7 +144,7 @@ const [valueDate, onChange] = useState(new Date());
     return (
       <Box display="flex" flexDirection="column" alignItems="center">
         <Typography variant="h4" gutterBottom>DDiary</Typography>
-        <Typography>Connect an Ethereum wallet to manage your portfolio</Typography>
+        <Typography>Connect an Ethereum wallet to manage your diary</Typography>
         <Login />
       </Box>
     );
