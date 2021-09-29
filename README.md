@@ -86,3 +86,5 @@ See the section about [deployment](https://facebook.github.io/create-react-app/d
 [React documentation](https://reactjs.org/)
 
 [Matierial UI](https://material-ui.com/)
+
+[React Calendar](https://www.npmjs.com/package/react-calendar)
