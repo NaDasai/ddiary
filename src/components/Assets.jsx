@@ -31,20 +31,20 @@ export default function Assets() {
 
   const { isAuthenticated } = useMoralis();
 
-  const [valueDate, onChange] = useState(new Date());
+  const [date, setDate] = useState(new Date());
 
 
       useEffect(() => {
         if(isAuthenticated){
-            onChangeDate(valueDate); 
-            console.log("valueDate in useeffect: " + valueDate)
+            onChangeDate(date); 
+            //console.log("date in useEffect: " + date)
     }
   }, [isAuthenticated]); 
 
     async function onChangeDate(nextValue) {
-      onChange(nextValue);
-      console.log("nextValue: " + nextValue)
-      console.log("valueDate: " + valueDate)
+      setDate(nextValue);
+      //console.log("nextValue: " + nextValue)
+      //console.log("date: " + date)
     }
 
 
@@ -105,13 +105,13 @@ export default function Assets() {
         <div style={{display: 'flex', justifyContent: 'center', alignItems:'center'}}>
       <Calendar
         onChange={onChangeDate}
-        value={valueDate}
+        value={date}
         maxDate={new Date()}
       />
     </div>
     <br />
     <div id="container">
-      <Transactions date={valueDate}/>
+      <Transactions date={date}/>
       </div>
       </CardContent>
       </Card>

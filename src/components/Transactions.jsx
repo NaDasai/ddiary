@@ -1,10 +1,11 @@
-import React, { useEffect, useState } from "react";
 import pageflip from "../data/pageflip.mp3";
+
+import { Typography } from "@material-ui/core";
+
 import { Moralis } from "moralis";
 
-function saveToMoralis () {
-    alert("button was clicked");
-  }
+import { useMoralisQuery } from "react-moralis";
+
 
 function millisecondsToTime (ms) {
     let minutes = Math.floor(ms / (1000 * 60));
@@ -26,25 +27,28 @@ function millisecondsToTime (ms) {
 }
 
 
-export default async function setDivDate ({date}) {
+export default function Transactions ({date}) {
 
-    //const { Moralis } = useMoralis();
+    //playSound(pageflipAudio);
+
+        // set lessThan date
+        let nextDate = new Date(date);
+        nextDate.setDate(nextDate.getDate()+1);
+              
+        const { data, error, isLoading } = useMoralisQuery("EthTransactions", query =>
+        query
+          .greaterThan("block_timestamp", date)
+          .lessThan("block_timestamp", nextDate),
+          [date],
+      );
+      
+    //console.log("Transactions json: " + JSON.stringify(data, null, 2))
     
-    // set lessThan date
-    let nextDate = new Date(date);
-    nextDate.setDate(nextDate.getDate()+1);
-                
-    let query = new Moralis.Query('EthTransactions')
-    query.greaterThan("block_timestamp", date);
-    query.lessThan("block_timestamp", nextDate);
-    const resultDateTransaction = await query.find()
-
-
-    if (resultDateTransaction.length > 0) {
+    if (!error & data.length > 0) {
 
     return (
       <table border = "1" bordercolor = "blue">
-      <caption>${resultDateTransaction.length} transaction(s) ${date.toLocaleDateString()}</caption>
+      <caption>{data.length} transaction(s) {date.toLocaleDateString()}</caption>
       <thead>
       <tr>
       <th scope="col">Transaction</th>
@@ -57,8 +61,9 @@ export default async function setDivDate ({date}) {
           </tr>
       </thead>
       <tbody>
-      {resultDateTransaction.forEach((t) => {
-    return (
+      {data.forEach((t) => {
+          console.log("hash" + t.attributes.hash)
+          return(
     <tr>
         <td><a href='https://etherscan.io/tx/${t.attributes.hash}' target="_blank" rel="noopener noreferrer">${t.attributes.hash}</a></td>
         <td><a href='https://etherscan.io/block/${t.attributes.block_number}' target="_blank" rel="noopener noreferrer">${t.attributes.block_number}</a></td>
@@ -68,13 +73,13 @@ export default async function setDivDate ({date}) {
         <td>${(t.attributes.value / 1e18).toFixed(5)} ETH</td>
         <td><input type="text" id="name" name="name"></input><button>Save</button></td>
     </tr>
-    );
-})}
+      ); })}
       </tbody>
       </table>
     );
 
-    playSound(pageflipAudio);
-
+}
+else {
+    return (<Typography>No transactions</Typography>);
 }
 }
