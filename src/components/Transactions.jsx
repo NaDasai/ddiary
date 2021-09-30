@@ -1,7 +1,5 @@
 import pageflip from "../data/pageflip.mp3";
 
-import { Typography } from "@material-ui/core";
-
 import { Moralis } from "moralis";
 
 import { useMoralisQuery } from "react-moralis";
@@ -29,7 +27,7 @@ function millisecondsToTime (ms) {
 
 export default function Transactions ({date}) {
 
-    //playSound(pageflipAudio);
+    playSound(pageflipAudio);
 
         // set lessThan date
         let nextDate = new Date(date);
@@ -61,18 +59,18 @@ export default function Transactions ({date}) {
           </tr>
       </thead>
       <tbody>
-      {data.forEach((t) => {
+      {data.map((t) => {
           console.log("hash" + t.attributes.hash)
           return(
-    <tr>
-        <td><a href='https://etherscan.io/tx/${t.attributes.hash}' target="_blank" rel="noopener noreferrer">${t.attributes.hash}</a></td>
-        <td><a href='https://etherscan.io/block/${t.attributes.block_number}' target="_blank" rel="noopener noreferrer">${t.attributes.block_number}</a></td>
-        <td>${millisecondsToTime(Date.parse(new Date()) - Date.parse(t.attributes.block_timestamp))}</td>
-        <td>${t.attributes.from_address == Moralis.User.current().get('ethAddress') ? 'Outgoing' : 'Incoming'}</td>
-        <td>${((t.attributes.gas * t.attributes.gas_price) / 1e18).toFixed(5)} ETH</td>
-        <td>${(t.attributes.value / 1e18).toFixed(5)} ETH</td>
-        <td><input type="text" id="name" name="name"></input><button>Save</button></td>
-    </tr>
+        <tr>
+            <td><a href='https://etherscan.io/tx/${t.attributes.hash}' target="_blank" rel="noopener noreferrer">${t.attributes.hash}</a></td>
+            <td><a href='https://etherscan.io/block/${t.attributes.block_number}' target="_blank" rel="noopener noreferrer">${t.attributes.block_number}</a></td>
+            <td>${millisecondsToTime(Date.parse(new Date()) - Date.parse(t.attributes.block_timestamp))}</td>
+            <td>${t.attributes.from_address == Moralis.User.current().get('ethAddress') ? 'Outgoing' : 'Incoming'}</td>
+            <td>${((t.attributes.gas * t.attributes.gas_price) / 1e18).toFixed(5)} ETH</td>
+            <td>${(t.attributes.value / 1e18).toFixed(5)} ETH</td>
+            <td><input type="file" id="notesFile"></input></td>
+        </tr>
       ); })}
       </tbody>
       </table>
@@ -80,6 +78,6 @@ export default function Transactions ({date}) {
 
 }
 else {
-    return (<Typography>No transactions</Typography>);
+    return (<table border = "1" bordercolor = "blue"><caption>{data.length} transaction(s) {date.toLocaleDateString()}</caption></table>);
 }
 }
