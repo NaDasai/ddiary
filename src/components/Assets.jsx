@@ -18,6 +18,8 @@ import imageNoteBack from '../data/noteback.jpg';
 
 import Transactions from "./Transactions";
 
+import pageflip from "../data/pageflip.mp3";
+
 
 const useStyles = makeStyles((theme) => ({
   tokenImg: {
@@ -25,6 +27,8 @@ const useStyles = makeStyles((theme) => ({
     width: "2rem",
   },
 }));
+
+const pageflipAudio = new Audio(pageflip);
 
 export default function Assets() {
 
@@ -39,12 +43,13 @@ export default function Assets() {
             onChangeDate(date); 
             //console.log("date in useEffect: " + date)
     }
-  }, [isAuthenticated]); 
+  }, [isAuthenticated, date]); 
 
     async function onChangeDate(nextValue) {
       setDate(nextValue);
       //console.log("nextValue: " + nextValue)
       //console.log("date: " + date)
+      pageflipAudio.play();
     }
 
 

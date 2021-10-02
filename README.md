@@ -18,6 +18,7 @@ Show history transactions
 Program transaction
 Add notes (display transactions notes)
 Take a loan. (show the ones we can)
+Video: IPFS in Moralis is 64MB, Database is about 3MB.
 
 ## Ideas
 
