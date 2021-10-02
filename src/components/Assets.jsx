@@ -28,8 +28,6 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const pageflipAudio = new Audio(pageflip);
-
 export default function Assets() {
 
 
@@ -47,8 +45,9 @@ export default function Assets() {
 
     async function onChangeDate(nextValue) {
       setDate(nextValue);
-      //console.log("nextValue: " + nextValue)
-      //console.log("date: " + date)
+      console.log("nextValue: " + nextValue)
+      console.log("date: " + date)
+      const pageflipAudio = new Audio(pageflip);
       pageflipAudio.play();
     }
 
@@ -109,7 +108,7 @@ export default function Assets() {
         <CardContent>
         <div style={{display: 'flex', justifyContent: 'center', alignItems:'center'}}>
       <Calendar
-        onChange={onChangeDate}
+        onChange={(v) => onChangeDate(v)}
         value={date}
         maxDate={new Date()}
       />

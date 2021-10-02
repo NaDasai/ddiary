@@ -14,9 +14,9 @@ npm install @walletconnect/web3-provider
 Git: https://www.datacamp.com/community/tutorials/git-push-pull
 
 TODO:
-Show history transactions
+Generate file with transactions and files and option to save ervey .. 
+Show dates and transactions with data
 Program transaction
-Add notes (display transactions notes)
 Take a loan. (show the ones we can)
 Video: IPFS in Moralis is 64MB, Database is about 3MB.
 
@@ -25,10 +25,9 @@ Video: IPFS in Moralis is 64MB, Database is about 3MB.
 Sort transactions (categories)
 
 ## Bugs
-NaN in ETH price
-Table of transactions not displayed well
-innerHTML null for +
-function for date?
+When I display transactions, errors when disconnect wallet.
+x2 date in log
+onSelect and date not same value
 
 ## To follow along
 

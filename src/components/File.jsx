@@ -83,7 +83,7 @@ else
  return (
     <td>
      <input type="file" id="notesFile" onChange={(e) => uploadFile(e, t)}></input>
-     <button onClick={(e) => displayFile(t)}>Cliquez ici</button>
+     <button onClick={(e) => displayFile(t)}>Open file</button>
      </td>
      );
 
