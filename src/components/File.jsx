@@ -24,8 +24,7 @@ async function uploadFile(event, object) {
       
         // see if in DB
 
-      const EthTransactionsFiles = Moralis.Object.extend('EthTransactionsFiles');
-      const query = new Moralis.Query(EthTransactionsFiles);
+      const query = new Moralis.Query("EthTransactionsFiles");
       query.equalTo("transaction", object);  
       const EthTransactionFile = await query.first();
       if(EthTransactionFile)
@@ -61,8 +60,7 @@ async function uploadFile(event, object) {
   async function displayFile(object) {
 
     console.log("clicked " + object)
-    const EthTransactionsFiles = Moralis.Object.extend('EthTransactionsFiles');
-    const query = new Moralis.Query(EthTransactionsFiles);
+    const query = new Moralis.Query("EthTransactionsFiles");
     query.equalTo("transaction", object);  
     const EthTransactionFile = await query.first();
     if(EthTransactionFile)

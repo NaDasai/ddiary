@@ -20,6 +20,10 @@ import Transactions from "./Transactions";
 
 import pageflip from "../data/pageflip.mp3";
 
+import "../styles.css";
+
+import { Moralis } from "moralis";
+
 
 const useStyles = makeStyles((theme) => ({
   tokenImg: {
@@ -33,6 +37,8 @@ export default function Assets() {
 
   const { isAuthenticated } = useMoralis();
 
+  const [datesToAddClassTo, setDatesToAddClassTo] = useState([]);
+
   const [date, setDate] = useState(new Date());
 
 
@@ -40,6 +46,7 @@ export default function Assets() {
         if(isAuthenticated){
             onChangeDate(date); 
             //console.log("date in useEffect: " + date)
+            getAllTransactions();
     }
   }, [isAuthenticated, date]); 
 
@@ -49,6 +56,49 @@ export default function Assets() {
       console.log("date: " + date)
       const pageflipAudio = new Audio(pageflip);
       pageflipAudio.play();
+    }
+
+
+    function isSameDay(d1, d2) {
+      return d1 === d2;
+    }
+
+    async function getAllTransactions() {
+
+      const queryTo = new Moralis.Query("EthTransactions");
+      queryTo.equalTo("to_address", Moralis.User.current()).get("ethAddress");
+      const queryFrom = new Moralis.Query("EthTransactions");
+      queryFrom.equalTo("from_address", Moralis.User.current().get("ethAddress"));
+
+      const query = Moralis.Query.or(queryTo, queryFrom);
+
+      const results = await query.find();
+      // Do something with the returned Moralis.Object values
+      let datesToAdd = [];
+      for (let i = 0; i < results.length; i++) {
+        const object = results[i];
+        console.log(object.get('block_timestamp').toLocaleDateString() );
+        datesToAdd.push(object.get('block_timestamp').toLocaleDateString());
+
+      }
+
+      // unique dates
+      datesToAdd = [...new Set(datesToAdd)];
+
+      setDatesToAddClassTo(datesToAdd);
+    }
+    
+     function tileClassName({ date, view }) {    
+      
+      console.log("datesToAddClassTo: " + datesToAddClassTo)
+      // Add class to tiles in month view only
+      if (view === 'month') {
+        // Check if a date React-Calendar wants to check is on the list of dates to add class to
+        if (datesToAddClassTo.find(dDate => isSameDay(dDate, date.toLocaleDateString()))) {
+          console.log("found")
+          return "boldate";
+        }
+      }
     }
 
 
@@ -111,6 +161,7 @@ export default function Assets() {
         onChange={(v) => onChangeDate(v)}
         value={date}
         maxDate={new Date()}
+        tileClassName={tileClassName}
       />
     </div>
     <br />
