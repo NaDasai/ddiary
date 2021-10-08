@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 
 import { Moralis } from "moralis";
-import { useMoralisQuery } from "react-moralis";
+import { useMoralisQuery, useMoralis } from "react-moralis";
 
 import File from "./File";
 
@@ -27,7 +27,7 @@ export default function Transactions ({date}) {
         let nextDate = new Date(date);
         nextDate.setDate(nextDate.getDate()+1);
               
-        const { data, error, isLoading } = useMoralisQuery("EthTransactions", query =>
+        const { data } = useMoralisQuery("EthTransactions", query =>
         query
           .greaterThan("block_timestamp", date)
           .lessThan("block_timestamp", nextDate),
@@ -42,8 +42,10 @@ export default function Transactions ({date}) {
             settData(data);
         }
       }, [data]);
+
+      const { isAuthenticated } = useMoralis();
     
-    if (!error & tdata.length > 0) {
+    if (tdata.length > 0 & isAuthenticated) {
 
     return (
       <table border = "1" bordercolor = "blue">
@@ -62,12 +64,13 @@ export default function Transactions ({date}) {
       {tdata.map((t, pos) => {
           console.log("hash " + t.attributes.hash)
           console.log("objectId " + t.attributes.objectId)
+          console.log("to_adress " + t.attributes.to_address)
           console.log("object " + t)
           return(
         <tr key={pos}>
             <td><a href={"https://etherscan.io/tx/"+t.attributes.hash} target="_blank" rel="noopener noreferrer">{t.attributes.hash}</a></td>
             <td><a href={"https://etherscan.io/block/"+t.attributes.block_number} target="_blank" rel="noopener noreferrer">{t.attributes.block_number}</a></td>
-            <td>{t.attributes.from_address == Moralis.User.current().get('ethAddress') ? 'Outgoing' : 'Incoming'}</td>
+            <td>{t.attributes.from_address === Moralis.User.current().get('ethAddress') ? 'Outgoing' : 'Incoming'}</td>
             <td>{(t.attributes.value / 1e18).toFixed(5)} ETH</td>
             <td>{((t.attributes.gas * t.attributes.gas_price) / 1e18).toFixed(5)} ETH</td>
             <File t={t}/>

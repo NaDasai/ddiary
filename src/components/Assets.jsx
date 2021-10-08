@@ -101,6 +101,34 @@ export default function Assets() {
       }
     }
 
+    async function generateBS(e) {
+
+      const query = new Moralis.Query("EthTransactionsFiles");
+      //query.equalTo("to_address", Moralis.User.current()).get("ethAddress");
+      const EthTransactionFile = await query.find();
+      let transactionsAipfs = [];
+      let myFifi = ""
+      if(EthTransactionFile)
+      {
+        for (let i = 0; i < EthTransactionFile.length; i++) {
+          const object = EthTransactionFile[i];
+          transactionsAipfs.push(object.get('transaction_hash'));
+          transactionsAipfs.push(object.get('ipfs'));
+          myFifi = myFifi + object.get('transaction_hash') + '\n' + object.get('ipfs');
+          console.log("myFifi " + myFifi);
+  
+        }
+
+        const element = document.createElement("a");
+    const file = new Blob(transactionsAipfs, {type: 'text/plain'});
+    element.href = URL.createObjectURL(file);
+    element.download = "myFifi.txt";
+    document.body.appendChild(element); // Required for this to work in FireFox
+    element.click();
+
+      }
+    }
+
 
   const { coinList, portfolioValue, isLoading } = useCoinData();
   const styles = useStyles();
@@ -163,9 +191,12 @@ export default function Assets() {
         maxDate={new Date()}
         tileClassName={tileClassName}
       />
+      <button onClick={(e) => generateBS(e)}>
+        Generate balance sheet
+      </button>
     </div>
     <br />
-    <div id="container">
+    <div id="container" class="center">
       <Transactions date={date}/>
       </div>
       </CardContent>
