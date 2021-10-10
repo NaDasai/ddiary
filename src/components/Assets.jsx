@@ -14,8 +14,6 @@ import { useMoralis } from "react-moralis";
 import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
 
-import imageNoteBack from '../data/noteback.jpg';
-
 import Transactions from "./Transactions";
 
 import pageflip from "../data/pageflip.mp3";
@@ -107,15 +105,15 @@ export default function Assets() {
       //query.equalTo("to_address", Moralis.User.current()).get("ethAddress");
       const EthTransactionFile = await query.find();
       let transactionsAipfs = [];
-      let myFifi = ""
       if(EthTransactionFile)
       {
         for (let i = 0; i < EthTransactionFile.length; i++) {
           const object = EthTransactionFile[i];
           transactionsAipfs.push(object.get('transaction_hash'));
+          transactionsAipfs.push("\n");
           transactionsAipfs.push(object.get('ipfs'));
-          myFifi = myFifi + object.get('transaction_hash') + '\n' + object.get('ipfs');
-          console.log("myFifi " + myFifi);
+          transactionsAipfs.push("\n");
+          transactionsAipfs.push("\n");
   
         }
 
@@ -144,7 +142,7 @@ export default function Assets() {
   }
 
   return (
-    <div style={{ backgroundImage: `url(${imageNoteBack})` }}>
+    <div>
       <Box my={2}>
         <Typography variant="h5" my={2}>
           {c2.format(portfolioValue)}
